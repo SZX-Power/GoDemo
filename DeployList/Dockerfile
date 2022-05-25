@@ -1,6 +1,6 @@
-FROM golang:1.16.12-alpine
+FROM golang:1.17.0-alpine
 ENV GO111MODULE=on \
-    GOPROXY = https://goproxy.cn,direct \
+    GOPROXY=https://mirrors.aliyun.com/goproxy/
 ENV TZ Asia/Shanghai
 WORKDIR /app
 COPY . .
