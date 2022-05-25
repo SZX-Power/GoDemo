@@ -5,18 +5,24 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/robfig/cron"
+	"io/ioutil"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 	"net/http"
+	"os"
 	"strings"
 )
+
+var namespace = os.Getenv("namespace")
+var url = os.Getenv("webhook")
+var scheduled = os.Getenv("scheduled")
 
 
 func Robot(content string){
 	dataJsonStr := fmt.Sprintf(`{"msgtype": "text", "text": {"content": "%s"}}`,content)
 	resp, err := http.Post(
-		"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=97cbb98d-6cb8-464a-8c96-0e262dae9452",
+		url,
 		"application/json",
 		//strings.NewReader("saas1命名空间fin-srv-dev下：\n"+dataJsonStr))
 		strings.NewReader(dataJsonStr))
@@ -31,11 +37,12 @@ func Robot(content string){
 
 
 func main() {
-	config ,err := clientcmd.BuildConfigFromFlags("",clientcmd.RecommendedHomeFile)
+	//config ,err := clientcmd.BuildConfigFromFlags("",clientcmd.RecommendedHomeFile)
+	kubeconfig ,err := ioutil.ReadFile("/conf/config")
 	if err != nil{
 		panic(err)
 	}
-
+	config ,err := clientcmd.RESTConfigFromKubeConfig(kubeconfig)
 	clientset , err := kubernetes.NewForConfig(config)
 	if err != nil{
 		panic(err)
@@ -43,7 +50,7 @@ func main() {
 
 	//coreV1 := clientset.CoreV1()
 	fmt.Printf("Listing deployments in namespace %q:\n", "fin-srv-dev")
-	deploy ,err := clientset.AppsV1().Deployments("fin-srv-dev").List(context.TODO(),metav1.ListOptions{})
+	deploy ,err := clientset.AppsV1().Deployments(namespace).List(context.TODO(),metav1.ListOptions{})
 	if err !=nil{
 		panic(err)
 		}
@@ -60,13 +67,13 @@ func main() {
 
 
 	}
-	content2 := "saas1命名空间fin-srv-dev下："
+	content2 := "命名空间"+namespace+"下："
 	contentsum := fmt.Sprintf("%s\n%s",content2,content)
 
 	//fmt.Println(contentsum)
 
 	c := cron.New()
-	c.AddFunc("* * 9 * * ?",func(){
+	c.AddFunc(scheduled,func(){
 		Robot(contentsum)
 		//log.Println("hello word")
 	})
