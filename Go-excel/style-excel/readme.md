@@ -51,7 +51,7 @@ if err != nil {
 
 打开预览，可以看到文字已经上下左右居中。
 
-![image-20220613154138419]([GoDemo\Go-excel\style-excel](https://github.com/SZX-Power/GoDemo/edit/main/Go-excel/style-excel/)\readme.assets\image-20220613154138419.png)
+![image-20220613154138419](https://github.com/SZX-Power/GoDemo/tree/main/Go-excel/style-excel/readme.assets/image-20220613154138419.png)
 
 同理，可以修改文字颜色和背景，同样通过 style 的属性来设置。
 
@@ -61,6 +61,6 @@ style.Fill.BgColor = xlsx.RGB_Dark_Green
 ```
 
 
-![image-20220613154151160](https://github.com/SZX-Power/GoDemo/edit/main/Go-excel/style-excel/readme.assets\image-20220613154151160.png)
+![image-20220613154151160](https://github.com/SZX-Power/GoDemo/tree/main/Go-excel/style-excel/readme.assets/image-20220613154151160.png)
 
 其他还有很多属性可以设置，比如合并单元格、字体、大小等等，大家可以自行测试。
